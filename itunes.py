@@ -41,7 +41,7 @@ class ItunesRSS2(PyRSS2Gen.RSS2):
 
 
 class ItunesRSSItem(PyRSS2Gen.RSSItem):
-    def __init__(self, rel_file, full_name):
+    def __init__(self, host, rel_file, full_name):
         """
         Override PyRSS2Gen.RSSItem constructor to simplify constructor args for user
         """
@@ -50,6 +50,7 @@ class ItunesRSSItem(PyRSS2Gen.RSSItem):
             title=tag.title,
             link=urllib.parse.quote(rel_file),
             author=tag.artist,
+            enclosure=PyRSS2Gen.Enclosure("http://" + host + "/" + urllib.parse.quote(rel_file), tag.filesize, "audio/mpeg"),
             guid=PyRSS2Gen.Guid(hashlib.sha256(full_name.encode('utf-8')).hexdigest(), isPermaLink=False),
             pubDate=tag.year
         )

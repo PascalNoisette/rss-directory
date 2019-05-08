@@ -31,7 +31,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
                 rel_file = os.path.join(rel_dir, file_name)
                 full_name = os.path.join(dir_, file_name)
                 if os.path.isfile(rel_file) and isValidItunesRSSItem(rel_file):
-                    yield ItunesRSSItem(rel_file, full_name)
+                    yield ItunesRSSItem(self.headers.get("Host"), rel_file, full_name)
 
     def list_directory(self, path):
         """
