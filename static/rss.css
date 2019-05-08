@@ -1,0 +1,52 @@
+html {    background: rgb(240, 240, 240);
+    font: 3mm tahoma,arial,helvetica,sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0 3em;
+    color: black;
+    font-family: Segoe UI;
+    font-size: 12px;
+}
+
+.rsshtml {
+    border: 1px solid ThreeDShadow;
+    padding: 3em;
+    padding-inline-start: 30px;
+    margin: 2em auto;
+    background: white;
+}
+
+.rsshtml-title {
+    margin-inline-start: 0;
+    margin-inline-end: .6em;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+h1 {
+    font-size: 160%;
+    border-bottom: 2px solid ThreeDLightShadow;
+    margin: 0 0 .2em 0;
+}
+
+h2 {
+    color: GrayText;
+    font-size: 100%;
+    font-weight: normal;
+    margin: 0 0 .6em 0;
+}
+
+.rsshtml-item-subtitle {
+    font-size: 85%;
+    font-weight: normal;
+}
+
+.rsshtml-item-description {
+    font-size: 110%;
+}
+
+.clear {
+    clear: both;
+}
