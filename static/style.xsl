@@ -9,6 +9,14 @@
       <link rel="stylesheet" type="text/css" href="rss.css"/>
     </head>
     <body>
+      <div id="feedHeaderContainer">
+        <div id="feedHeader" dir="ltr" class="feedBackground">
+            <div id="feedSubscribeLine">
+              <label id="subscribeUsingDescription">Subscribe to this feed </label>
+            </div>
+        </div>
+        <div id="feedHeaderContainerSpacer"></div>
+    </div>
       <div class="rsshtml">
       <xsl:apply-templates select="channel" />
     </div>
@@ -44,8 +52,19 @@
       <div class="rsshtml-item-description">
         <xsl:value-of select="description" />
       </div>
+      <xsl:apply-templates select="enclosure" />
+
     </div>
     <div style="clear: both;"></div>
+  </xsl:template>
+
+  <xsl:template match="enclosure">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="enclosures">Media files
+          <div class="enclosure">
+            <img alt="" src="/fileIcon.png" class="type-icon" />
+            <a href="{@url}"><xsl:value-of select="@url" /></a>
+          </div>
+      </div>
   </xsl:template>
 
 </xsl:stylesheet>
