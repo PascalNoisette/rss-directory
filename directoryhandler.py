@@ -38,18 +38,17 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         Override to return XML dir listing instead of default dir listing
         """
         encoding = sys.getfilesystemencoding()
-        f = io.BytesIO()
         try:
-            f.write(ItunesRSS2(path, self.get_items(path)).to_xml(encoding).encode(encoding, 'surrogateescape'))
+            file = "/index.xml"
+            f = io.open("/app/static" + file, "w")
+            ItunesRSS2(path, self.get_items(path)).write_xml(f, encoding)
+            f.close()
+            self.send_response(HTTPStatus.FOUND)
+            self.send_header("Location", file)
+            self.end_headers()
         except OSError:
             self.send_error(
                 HTTPStatus.NOT_FOUND,
                 "No permission to list directory")
-            return None
-        content_len = f.tell();
-        f.seek(0)
-        self.send_response(HTTPStatus.OK)
-        self.send_header("Content-type", "text/xml; charset=%s" % encoding)
-        self.send_header("Content-Length", str(content_len))
-        self.end_headers()
-        return f
+
+        return None
