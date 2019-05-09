@@ -2,7 +2,7 @@ import optparse
 import os
 import socketserver
 
-from directoryhandler import DirectoryHandler
+from rangehandler import RangeHandler
 
 if __name__ == "__main__":
     parser = optparse.OptionParser()
@@ -10,6 +10,6 @@ if __name__ == "__main__":
     parser.add_option("-d", "--dir", help="Directory to serve", default="/pub/")
     (option, args) = parser.parse_args()
     os.chdir(option.dir)
-    httpd = socketserver.TCPServer(("", option.port), DirectoryHandler)
+    httpd = socketserver.ThreadingTCPServer(("", option.port), RangeHandler)
     print("serving at port", option.port)
     httpd.serve_forever()
