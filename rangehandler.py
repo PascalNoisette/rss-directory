@@ -6,12 +6,12 @@
 """
 
 import os
-from directoryhandler import DirectoryHandler
+from http.server import SimpleHTTPRequestHandler
 
 import re
 
 
-class RangeHandler(DirectoryHandler):
+class RangeHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         """
