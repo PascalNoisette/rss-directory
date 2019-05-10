@@ -31,7 +31,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
                 rel_file = os.path.join(rel_dir, file_name)
                 full_name = os.path.join(dir_, file_name)
                 if os.path.isfile(rel_file) and isValidItunesRSSItem(rel_file):
-                    yield ItunesRSSItem(self.headers.get("Host"), rel_file, full_name)
+                    yield ItunesRSSItem(self.get_base_url(), rel_file, full_name)
 
     def list_directory(self, path):
         """
@@ -41,10 +41,10 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         try:
             file = "/index.xml"
             f = io.open("/app/static" + file, "w")
-            ItunesRSS2(path, self.get_items(path)).write_xml(f, encoding)
+            ItunesRSS2(self.get_base_url(), path, self.get_items(path)).write_xml(f, encoding)
             f.close()
             self.send_response(HTTPStatus.FOUND)
-            self.send_header("Location", file)
+            self.send_header("Location", self.get_base_url()+file)
             self.end_headers()
         except OSError:
             self.send_error(
@@ -52,3 +52,8 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
                 "No permission to list directory")
 
         return None
+
+    def get_base_url(self):
+        host = self.headers.get("X-Forwarded-Host", self.headers.get("Host"))
+        proto = self.headers.get("X-Forwarded-Proto", "http")
+        return proto + "://" + host

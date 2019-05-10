@@ -12,7 +12,7 @@ from tinytag import TinyTag
 
 
 class ItunesRSS2(PyRSS2Gen.RSS2):
-    def __init__(self, path, items):
+    def __init__(self, base_url, path, items):
         """
         Override PyRSS2Gen.RSS2 constructor
         - to simplify constructor args for user
@@ -26,6 +26,7 @@ class ItunesRSS2(PyRSS2Gen.RSS2):
             description=""
         )
 
+        self.base_url=base_url
         self.rss_attrs["xmlns:itunes"] = "http://www.itunes.com/dtds/podcast-1.0.dtd"
         self.rss_attrs["xmlns:atom"] = "http://www.w3.org/2005/Atom"
         self.rss_attrs["xmlns:media"] = "http://search.yahoo.com/mrss/"
@@ -35,13 +36,13 @@ class ItunesRSS2(PyRSS2Gen.RSS2):
         """
         Override PyRSS2Gen.RSS2.publish to add stylesheet to header
         """
-        handler.processingInstruction("xml-stylesheet" ,'type="text/xsl" href="/style.xsl"');
+        handler.processingInstruction("xml-stylesheet" ,'type="text/xsl" href="'+self.base_url+'/style.xsl"');
         handler.characters("\n");
         super().publish(handler)
 
 
 class ItunesRSSItem(PyRSS2Gen.RSSItem):
-    def __init__(self, host, rel_file, full_name):
+    def __init__(self, base_url, rel_file, full_name):
         """
         Override PyRSS2Gen.RSSItem constructor to simplify constructor args for user
         """
@@ -50,7 +51,7 @@ class ItunesRSSItem(PyRSS2Gen.RSSItem):
             title=tag.title,
             link=urllib.parse.quote(rel_file),
             author=tag.artist,
-            enclosure=PyRSS2Gen.Enclosure("http://" + host + "/" + urllib.parse.quote(rel_file), tag.filesize, "audio/mpeg"),
+            enclosure=PyRSS2Gen.Enclosure(base_url + "/" + urllib.parse.quote(rel_file), tag.filesize, "audio/mpeg"),
             guid=PyRSS2Gen.Guid(hashlib.sha256(full_name.encode('utf-8')).hexdigest(), isPermaLink=False),
             pubDate=tag.year
         )
