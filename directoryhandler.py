@@ -28,9 +28,9 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         """
         Override to serve /app/static/ dir in addition to cwd
         """
-        staticfile = "/app/static" + path
-        if os.path.exists(staticfile) and os.path.isfile(staticfile) and not os.path.isdir(staticfile):
-            return staticfile
+        static_file = "/app/static" + path
+        if os.path.exists(static_file) and os.path.isfile(static_file) and not os.path.isdir(static_file):
+            return static_file
         return super().translate_path(path)
 
     def list_directory(self, path):

@@ -17,12 +17,12 @@ def generate(path, file, base_url, pdir):
     os.system("python /app/background.py -p %s -f %s -b %s -d %s &" % (path, file, base_url, pdir))
 
 
-def file_is_ready(staticfile):
-    if staticfile.endswith(".xml") and not os.path.exists(staticfile):
+def file_is_ready(static_file):
+    if static_file.endswith(".xml") and not os.path.exists(static_file):
         raise BlockingIOError
 
-    if os.path.isfile(staticfile):
-        f = io.open(staticfile, "r")
+    if os.path.isfile(static_file):
+        f = io.open(static_file, "r")
         fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
         fcntl.flock(f, fcntl.LOCK_UN)
         f.close()
