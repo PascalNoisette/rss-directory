@@ -10,7 +10,7 @@ import io
 import optparse
 import sys
 
-from itunes import ItunesRSS2, ItunesRSSItem, isValidItunesRSSItem
+from itunes import ItunesRSS2, ItunesRSSItem, is_valid_itunes_rss_item
 
 
 def generate(path, file, base_url, pdir):
@@ -35,7 +35,7 @@ def get_items(root_dir, base_url):
             rel_dir = os.path.relpath(dir_, os.getcwd())
             rel_file = os.path.join(rel_dir, file_name)
             full_name = os.path.join(dir_, file_name)
-            if os.path.isfile(rel_file) and isValidItunesRSSItem(rel_file):
+            if os.path.isfile(rel_file) and is_valid_itunes_rss_item(rel_file):
                 yield ItunesRSSItem(base_url, rel_file, full_name)
 
 

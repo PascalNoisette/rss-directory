@@ -63,7 +63,7 @@ class ItunesRSSItem(PyRSS2Gen.RSSItem):
         PyRSS2Gen._element(handler, "media:thumbnail", None, {"url": self.link + ".png"})
 
 
-def isValidItunesRSSItem(rel_file):
+def is_valid_itunes_rss_item(rel_file):
     """
     Hide TinyTag from user, supply him a predicate
     """
