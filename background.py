@@ -13,6 +13,22 @@ import sys
 from itunes import ItunesRSS2, ItunesRSSItem, isValidItunesRSSItem
 
 
+def generate(path, file, base_url, pdir):
+    os.system("python /app/background.py -p %s -f %s -b %s -d %s &" % (path, file, base_url, pdir))
+
+
+def file_is_ready(staticfile):
+    if staticfile.endswith(".xml") and not os.path.exists(staticfile):
+        raise BlockingIOError
+
+    if os.path.isfile(staticfile):
+        f = io.open(staticfile, "r")
+        fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        fcntl.flock(f, fcntl.LOCK_UN)
+        f.close()
+    return True
+
+
 def get_items(root_dir, base_url):
     for dir_, _, files in os.walk(root_dir):
         for file_name in files:
