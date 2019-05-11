@@ -7,6 +7,7 @@
 import io
 import os
 import sys
+import re
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler
 
@@ -27,7 +28,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
     def get_items(self, root_dir):
         for dir_, _, files in os.walk(root_dir):
             for file_name in files:
-                rel_dir = os.path.relpath(dir_, root_dir)
+                rel_dir = os.path.relpath(dir_, os.getcwd())
                 rel_file = os.path.join(rel_dir, file_name)
                 full_name = os.path.join(dir_, file_name)
                 if os.path.isfile(rel_file) and isValidItunesRSSItem(rel_file):
@@ -40,6 +41,9 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         encoding = sys.getfilesystemencoding()
         try:
             file = "/index.xml"
+            rel_dir = os.path.relpath(path, os.getcwd())
+            if not rel_dir == "." :
+                file = "/" + re.sub(r'(?u)[^-\w.]', '', str(rel_dir).strip().replace(' ', '_')) + ".xml"
             f = io.open("/app/static" + file, "w")
             ItunesRSS2(self.get_base_url(), path, self.get_items(path)).write_xml(f, encoding)
             f.close()
