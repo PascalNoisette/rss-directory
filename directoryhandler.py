@@ -14,7 +14,6 @@ import background
 
 class DirectoryHandler(SimpleHTTPRequestHandler):
 
-
     def send_head(self):
         try:
             background.file_is_ready(self.translate_path(self.path))
@@ -38,10 +37,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         """
         Override to return XML dir listing instead of default dir listing
         """
-        file = "/index.xml"
-        rel_dir = os.path.relpath(path, os.getcwd())
-        if not rel_dir == ".":
-            file = "/" + re.sub(r'(?u)[^-\w.]', '', str(rel_dir).strip().replace(' ', '_')) + ".xml"
+        file = self.get_rss_filename(path)
         background.generate(path=path, file="/app/static" + file, base_url=self.get_base_url(), pdir=os.getcwd())
         self.send_response(HTTPStatus.FOUND)
         self.send_header("Location", self.get_base_url()+file)
@@ -51,3 +47,11 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         host = self.headers.get("X-Forwarded-Host", self.headers.get("Host"))
         proto = self.headers.get("X-Forwarded-Proto", "http")
         return proto + "://" + host
+
+    @staticmethod
+    def get_rss_filename(path):
+        file = "/index.xml"
+        rel_dir = os.path.relpath(path, os.getcwd())
+        if not rel_dir == ".":
+            file = "/" + re.sub(r'(?u)[^-\w.]', '', str(rel_dir).strip().replace(' ', '_')) + ".xml"
+        return file
