@@ -3,4 +3,4 @@ RUN mkdir /app /pub
 COPY . /app/
 WORKDIR /app
 RUN pip install -r requirements.txt
-CMD ["python", "./directoryrss.py"]
+CMD ["python", "-u", "./directoryrss.py"]
