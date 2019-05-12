@@ -10,12 +10,15 @@ class RssHandler(DirectoryHandler, RangeHandler, ImageHandler):
     # @todo  : i am starting to need a router
     pass
 
+class Server(socketserver.ThreadingTCPServer):
+    allow_reuse_address = os.environ.get('DEBUG', False)
+
 if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option("-p", "--port", help="Port", default=5000)
     parser.add_option("-d", "--dir", help="Directory to serve", default="/pub/")
     (option, args) = parser.parse_args()
     os.chdir(option.dir)
-    httpd = socketserver.ThreadingTCPServer(("", option.port), RssHandler)
+    httpd = Server(("", option.port), RssHandler)
     print("serving at port", option.port)
     httpd.serve_forever()
