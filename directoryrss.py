@@ -4,8 +4,10 @@ import socketserver
 
 from directoryhandler import DirectoryHandler
 from rangehandler import RangeHandler
+from imagehandler import ImageHandler
 
-class RssHandler(DirectoryHandler, RangeHandler):
+class RssHandler(DirectoryHandler, RangeHandler, ImageHandler):
+    # @todo  : i am starting to need a router
     pass
 
 if __name__ == "__main__":

@@ -23,7 +23,8 @@ class ItunesRSS2(PyRSS2Gen.RSS2):
             link=path,
             lastBuildDate=datetime.datetime.now(),
             items=items,
-            description=""
+            description="",
+            image=PyRSS2Gen.Image(base_url + "/feedIcon.png", path, path)
         )
 
         self.base_url=base_url
@@ -60,7 +61,7 @@ class ItunesRSSItem(PyRSS2Gen.RSSItem):
         """
          Override to set values of various itunes xmlns tags
          """
-        PyRSS2Gen._element(handler, "media:thumbnail", None, {"url": self.link + ".png"})
+        PyRSS2Gen._element(handler, "image", PyRSS2Gen.Image(self.enclosure.url + ".png", self.title, self.link))
 
 
 def is_valid_itunes_rss_item(rel_file):

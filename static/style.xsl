@@ -59,9 +59,14 @@
   </xsl:template>
 
   <xsl:template match="enclosure">
-    <div xmlns="http://www.w3.org/1999/xhtml" class="enclosures">Media files
+    <div class="enclosures">Media files
           <div class="enclosure">
-            <img alt="" src="fileIcon.png" class="type-icon" />
+            <xsl:if test="../image">
+              <img alt="" src="{../image/url}" class="type-icon" width="16" height="16"/>
+            </xsl:if>
+            <xsl:if test="not(../image)">
+              <img alt="" src="fileIcon.png" class="type-icon" width="16" height="16"/>
+            </xsl:if>
             <a href="{@url}"><xsl:value-of select="@url" /></a>
           </div>
       </div>
