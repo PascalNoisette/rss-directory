@@ -61,7 +61,7 @@
   <xsl:template match="enclosure">
     <div xmlns="http://www.w3.org/1999/xhtml" class="enclosures">Media files
           <div class="enclosure">
-            <img alt="" src="/fileIcon.png" class="type-icon" />
+            <img alt="" src="fileIcon.png" class="type-icon" />
             <a href="{@url}"><xsl:value-of select="@url" /></a>
           </div>
       </div>
