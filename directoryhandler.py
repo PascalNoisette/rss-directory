@@ -38,7 +38,8 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         Override to return XML dir listing instead of default dir listing
         """
         file = self.get_rss_filename(path)
-        background.generate(path=path, file="/app/static" + file, base_url=self.get_base_url(), pdir=os.getcwd())
+        if self.need_created("/app/static" + file) :
+            background.generate(path=path, file="/app/static" + file, base_url=self.get_base_url(), pdir=os.getcwd())
         self.send_response(HTTPStatus.FOUND)
         self.send_header("Location", self.get_base_url()+file)
         self.end_headers()
@@ -55,3 +56,10 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         if not rel_dir == ".":
             file = "/" + re.sub(r'(?u)[^-\w.]', '', str(rel_dir).strip().replace(' ', '_')) + ".xml"
         return file
+
+    def need_created(self, file):
+        if not os.path.exists(file):
+            return True
+        if self.headers.get("Cache-Control") == "no-cache":
+            return True
+        return False
