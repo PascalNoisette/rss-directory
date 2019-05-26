@@ -27,6 +27,8 @@ class WsgiHandler(BaseHTTPRequestHandler):
         for header in environ:
             if header.startswith("HTTP_"):
                 self.headers["-".join(map(str.capitalize, header[5:].split("_")))] = environ[header]
+            if header.startswith("X"):
+                self.headers[header] = environ[header]
 
     def handle(self):
         mname = 'do_' + self.command
