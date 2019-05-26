@@ -29,6 +29,24 @@ You must forward host and original protocol to backend
    }
 ```
 
+This is similar if you prefer the wsgi backend
+
+```
+
+    location /podcast {
+        # solve lot of problem caused by
+        # - uwsgi's manage-script-name
+        # - nginx uwsgi_modifier1 30;
+        rewrite /podcast(.*) $1 break;
+
+        include uwsgi_params;
+        uwsgi_pass backend:3031;
+        uwsgi_param X-Forwarded-Host $host/podcast;
+        uwsgi_param X-Forwarded-Proto $scheme;
+    }
+    
+```
+
 ## Or build
 ```
 git clone https://github.com/PascalNoisette/rss-directory.git
