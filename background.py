@@ -9,13 +9,14 @@ import fcntl
 import io
 import optparse
 import sys
+import threading
 
 from itunes import ItunesRSS2, ItunesRSSItem, is_valid_itunes_rss_item
 
 
 def generate(path, file, base_url, pdir):
-    os.system("python /app/background.py -p %s -f %s -b %s -d %s &" % (path, file, base_url, pdir))
-
+    task = threading.Thread(target=run, args=(path, file, base_url))
+    task.start()
 
 def file_is_ready(static_file):
     if static_file.endswith(".xml") and not os.path.exists(static_file):
