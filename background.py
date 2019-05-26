@@ -5,10 +5,9 @@
 """
 
 import os
-import fcntl
-import io
 import optparse
 import sys
+import tempfile
 import threading
 
 from itunes import ItunesRSS2, ItunesRSSItem, is_valid_itunes_rss_item
@@ -20,13 +19,7 @@ def generate(path, file, base_url, pdir):
 
 def file_is_ready(static_file):
     if static_file.endswith(".xml") and not os.path.exists(static_file):
-        raise BlockingIOError
-
-    if os.path.isfile(static_file):
-        f = io.open(static_file, "r")
-        fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        fcntl.flock(f, fcntl.LOCK_UN)
-        f.close()
+        return False
     return True
 
 
@@ -42,11 +35,11 @@ def get_items(root_dir, base_url):
 
 def run(path, file, base_url):
     encoding = sys.getfilesystemencoding()
-    f = io.open(file, "w")
-    fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    fd, tmp = tempfile.mkstemp()
+    f = os.fdopen(fd, 'w')
     ItunesRSS2(base_url, path, get_items(path, base_url)).write_xml(f, encoding)
-    fcntl.flock(f, fcntl.LOCK_UN)
     f.close()
+    os.rename(tmp, file)
 
 
 if __name__ == "__main__":

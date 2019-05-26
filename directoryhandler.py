@@ -15,14 +15,11 @@ import background
 class DirectoryHandler(SimpleHTTPRequestHandler):
 
     def send_head(self):
-        try:
-            background.file_is_ready(self.translate_path(self.path))
-        except BlockingIOError:
-            self.send_error(
+        if background.file_is_ready(self.translate_path(self.path)):
+            return super().send_head()
+        return self.send_error(
                 HTTPStatus.SERVICE_UNAVAILABLE,
                 "Rss currently being generated")
-            return None
-        return super().send_head()
 
     def translate_path(self, path):
         """
