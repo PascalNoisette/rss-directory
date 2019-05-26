@@ -28,7 +28,7 @@ class ImageHandler(SimpleHTTPRequestHandler):
 
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-type", "image/png")
-        self.send_header("Content-Length", len(image))
+        self.send_header("Content-Length", str(len(image)))
         self.end_headers()
         self.wfile.write(image)
 
