@@ -8,6 +8,14 @@ docker run --rm -d -p5000:5000 -v ~/YourPodcast:/pub/ netpascal0123/rss-director
 ```
 By default, this application will list all podcast file in the /pub/ directory and publish a RSS report on port 5000
 
+## Run as wsgi service 
+
+```
+docker run --rm -d -p3031:3031 -v ~/YourPodcast:/pub/ netpascal0123/rss-directory uwsgi --ini uwsgi.ini
+
+```
+
+
 ### Sample configuration to run with a reverse proxy
 
 You must forward host and original protocol to backend

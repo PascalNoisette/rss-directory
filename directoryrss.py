@@ -5,6 +5,7 @@ import socketserver
 from directoryhandler import DirectoryHandler
 from rangehandler import RangeHandler
 from imagehandler import ImageHandler
+from wsgihandler import WsgiHandler
 
 class RssHandler(DirectoryHandler, RangeHandler, ImageHandler):
     # @todo  : i am starting to need a router
@@ -12,6 +13,16 @@ class RssHandler(DirectoryHandler, RangeHandler, ImageHandler):
 
 class Server(socketserver.ThreadingTCPServer):
     allow_reuse_address = os.environ.get('DEBUG', False)
+
+
+class RssHandlerWsgi(WsgiHandler, RssHandler):
+    pass
+
+def application(environ, start_response):
+    os.chdir("/pub/")
+    handler = RssHandlerWsgi(environ, environ['REMOTE_ADDR'], start_response)
+    return handler.get_content()
+
 
 if __name__ == "__main__":
     parser = optparse.OptionParser()
