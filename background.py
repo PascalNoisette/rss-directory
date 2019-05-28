@@ -5,10 +5,12 @@
 """
 
 import os
+import io
 import optparse
 import sys
-import tempfile
 import threading
+import fcntl
+from shutil import copyfile
 
 from itunes import ItunesRSS2, ItunesRSSItem, is_valid_itunes_rss_item
 
@@ -35,11 +37,14 @@ def get_items(root_dir, base_url):
 
 def run(path, file, base_url):
     encoding = sys.getfilesystemencoding()
-    fd, tmp = tempfile.mkstemp()
-    f = os.fdopen(fd, 'w')
+    tmp = file + ".tmp"
+    f = io.open(tmp, "w")
+    fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
     ItunesRSS2(base_url, path, get_items(path, base_url)).write_xml(f, encoding)
+    fcntl.flock(f, fcntl.LOCK_UN)
     f.close()
-    os.rename(tmp, file)
+    copyfile(tmp, file)
+    os.remove(tmp)
 
 
 if __name__ == "__main__":
