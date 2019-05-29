@@ -8,7 +8,6 @@ import os
 import io
 import optparse
 import sys
-import threading
 import fcntl
 from shutil import copyfile
 
@@ -16,8 +15,7 @@ from itunes import ItunesRSS2, ItunesRSSItem, is_valid_itunes_rss_item
 
 
 def generate(path, file, base_url, pdir):
-    task = threading.Thread(target=run, args=(path, file, base_url))
-    task.start()
+    run.delay(path, file, base_url, pdir)
 
 def file_is_ready(static_file):
     if static_file.endswith(".xml") and not os.path.exists(static_file):
@@ -35,7 +33,10 @@ def get_items(root_dir, base_url):
                 yield ItunesRSSItem(base_url, rel_file, full_name)
 
 
-def run(path, file, base_url):
+from delay import app
+@app.task
+def run(path, file, base_url, pdir):
+    os.chdir(pdir)
     encoding = sys.getfilesystemencoding()
     tmp = file + ".tmp"
     f = io.open(tmp, "w")

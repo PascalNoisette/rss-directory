@@ -59,3 +59,28 @@ You can also generate the rss file in command line, outside a server context
 ```
 python ./background.py 
 ```
+## Use broker instead of thread
+
+If the broker url is supplied in the environment variable `BROKER` celery will be used instead of a thread.
+In that case workers must also be started
+
+```yaml
+version: '3'
+
+services:
+  backend:
+    build: .
+    volumes:
+      - "~/YourPodcast:/pub/"
+    depends_on:
+      - rabbitmq
+    user: uwsgi
+    command: sh -c "python -u ./directoryrss.py & python ./venv/bin/celery -A background worker --loglevel=debug"
+    environment:
+      - BROKER=pyamqp://guest@rabbitmq//
+    ports:
+      - 5000:5000
+
+  rabbitmq:
+      image: rabbitmq
+```
