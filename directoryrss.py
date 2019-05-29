@@ -19,7 +19,6 @@ class RssHandlerWsgi(WsgiHandler, RssHandler):
     pass
 
 def application(environ, start_response):
-    os.chdir("/pub/")
     handler = RssHandlerWsgi(environ, environ['REMOTE_ADDR'], start_response)
     return handler.get_content()
 

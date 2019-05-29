@@ -17,6 +17,7 @@ class WsgiHandler(BaseHTTPRequestHandler):
         self.wsgi_response = ""
 
         environ = self.request
+        os.chdir(environ['DOCUMENT_ROOT'] + "/")
         self.request_version = environ['SERVER_PROTOCOL'];
         self.command = environ['REQUEST_METHOD']
         self.directory = os.getcwd()
