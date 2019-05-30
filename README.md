@@ -47,6 +47,12 @@ This is similar if you prefer the wsgi backend
     
 ```
 
+You must have a clean document root for the backend
+
+```
+        uwsgi_param DOCUMENT_ROOT /pub/;
+```
+
 ## Or build
 ```
 git clone https://github.com/PascalNoisette/rss-directory.git
