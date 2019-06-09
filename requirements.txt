@@ -3,3 +3,4 @@ tinytag
 celery
 Jinja2
 websocket
+watchdog

@@ -6,11 +6,12 @@ from directoryhandler import DirectoryHandler
 from rangehandler import RangeHandler
 from imagehandler import ImageHandler
 from sockethandler import SocketHandler
+from watchhandler import WatchHandler
 from wsgihandler import WsgiHandler
 from jinjahandler import JinjaHandler
 
 
-class RssHandler(SocketHandler, DirectoryHandler, RangeHandler, ImageHandler, JinjaHandler):
+class RssHandler(WatchHandler, SocketHandler, DirectoryHandler, RangeHandler, ImageHandler, JinjaHandler):
     # @todo  : i am starting to need a router
     pass
 
