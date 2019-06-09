@@ -1,4 +1,4 @@
-from jinja2 import Environment, PackageLoader, select_autoescape, Template
+from jinja2 import Environment, FileSystemLoader, select_autoescape, Template
 from http.server import BaseHTTPRequestHandler
 
 
@@ -21,7 +21,7 @@ Template.setData = support_for_context_variable
 class JinjaHandler(BaseHTTPRequestHandler):
 
     env = Environment(
-        loader=PackageLoader('template', package_path="."),
+        loader=FileSystemLoader('/app/template'),
         autoescape=select_autoescape(['html', 'xml'])
     )
     error_message_format = env.get_template('error.html')
