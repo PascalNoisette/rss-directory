@@ -38,11 +38,10 @@ class WsgiHandler(BaseHTTPRequestHandler):
                 self.headers["-".join(map(str.capitalize, header[5:].split("_")))] = environ[header]
             if header.startswith("X"):
                 self.headers[header] = environ[header]
-        if 'HTTP_SEC_WEBSOCKET_KEY' in environ:
-            self.on_ws_connected(self)
+
 
     def do_SOCKET(self):
-        pass
+        self.on_ws_connected(self)
 
     def send_message(self, message):
         uwsgi.websocket_send(message)
