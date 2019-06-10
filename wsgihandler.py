@@ -7,6 +7,13 @@ try:
 except ImportError:
     pass
 
+class WsgiFileWrapper:
+    def __init__(self, fd):
+        self.fd = fd
+
+    def fileno(self):
+        return self.fd
+
 class WsgiHandler(BaseHTTPRequestHandler):
     # generic class for SimpleHTTPServer
     # you can use it as a trait
@@ -17,6 +24,7 @@ class WsgiHandler(BaseHTTPRequestHandler):
         # override to disable socket dependencies of StreamRequestHandler
         # do_GET will be called outside normal workflow
         self.wfile = tempfile.TemporaryFile()
+        self.rfile =  WsgiFileWrapper(uwsgi.connection_fd())# https://github.com/unbit/uwsgi/blob/master/tests/websockets_chat_async.py
         self.wsgi_headers = []
         self.wsgi_response = ""
 
