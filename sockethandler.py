@@ -1,7 +1,8 @@
+from http.server import SimpleHTTPRequestHandler
 from HTTPWebSocketsHandler import HTTPWebSocketsHandler
 
 
-class SocketHandler(HTTPWebSocketsHandler):
+class SocketHandler(SimpleHTTPRequestHandler):
 
     def parse_request(self):
         parseStatus = super().parse_request()
@@ -10,5 +11,4 @@ class SocketHandler(HTTPWebSocketsHandler):
         return parseStatus
 
     def do_SOCKET(self):
-        self._handshake()
-        self._read_messages()
+        HTTPWebSocketsHandler(self)

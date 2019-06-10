@@ -4,7 +4,7 @@ from http.server import SimpleHTTPRequestHandler
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from pathlib import Path
-from HTTPWebSocketsHandler import HTTPWebSocketsHandler
+
 
 class XmlWatcher(FileSystemEventHandler):
 
@@ -12,30 +12,26 @@ class XmlWatcher(FileSystemEventHandler):
         self.websocket = websocket
 
     def on_any_event(self, event):
-        if event.src_path == "/app/static" + self.websocket.path :
-            self.websocket.send_message(self.websocket.path + " has changed")
+        if event.src_path == "/app/static" + self.websocket.http_handler.path :
+            self.websocket.send_message(self.websocket.http_handler.path + " has changed")
 
 
-class WatchHandler(HTTPWebSocketsHandler):
+class WatchHandler(SimpleHTTPRequestHandler):
 
-    def on_ws_connected(self):
+    def on_ws_connected(self, websocket):
         self.log_message('"WS CONNECTED"')
         file = "/app/static" + self.path
         path = os.path.dirname(file)
         self.observer = Observer()
-        self.observer.schedule(XmlWatcher(self), path, recursive=False)
+        self.observer.schedule(XmlWatcher(websocket), path, recursive=False)
         self.observer.start()
         # prevent observer created to late to watch forever if file already exists
         if os.path.exists(file):
             Path(file).touch()
 
-    def on_ws_message(self, message):
-        self.log_message('"WS IN"')
-
-    def on_ws_closed(self):
-        self.log_message('"WS CLOSED"')
+    def on_ws_closed(self, websocket):
         self.observer.stop()
+        self.log_message('"WS CLOSED"')
 
-    def send_message(self, message):
-        self.log_message('"WS OUT"')
-        super().send_message(message)
+    def on_ws_message(self, websocket, message):
+        pass
