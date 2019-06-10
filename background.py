@@ -39,7 +39,7 @@ def run(path, file, base_url, pdir):
     os.chdir(pdir)
     encoding = sys.getfilesystemencoding()
     tmp = file + ".tmp"
-    f = io.open(tmp, "w")
+    f = io.open(tmp, "a")
     fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
     ItunesRSS2(base_url, path, get_items(path, base_url)).write_xml(f, encoding)
     fcntl.flock(f, fcntl.LOCK_UN)
