@@ -8,12 +8,12 @@ from pathlib import Path
 
 class XmlWatcher(FileSystemEventHandler):
 
-    def __init__(self, websocket):
-        self.websocket = websocket
+    def __init__(self, http_handler):
+        self.http_handler = http_handler
 
     def on_any_event(self, event):
-        if event.src_path == "/app/static" + self.websocket.http_handler.path :
-            self.websocket.send_message(self.websocket.http_handler.path + " has changed")
+        if event.src_path == "/app/static" + self.http_handler.path :
+            self.http_handler.observer.stop()
 
 
 class WatchHandler(SimpleHTTPRequestHandler):
@@ -23,11 +23,13 @@ class WatchHandler(SimpleHTTPRequestHandler):
         file = "/app/static" + self.path
         path = os.path.dirname(file)
         self.observer = Observer()
-        self.observer.schedule(XmlWatcher(websocket), path, recursive=False)
+        self.observer.schedule(XmlWatcher(self), path, recursive=False)
         self.observer.start()
         # prevent observer created to late to watch forever if file already exists
         if os.path.exists(file):
             Path(file).touch()
+        self.observer.join()
+        websocket.send_message(self.path + " has changed")
 
     def on_ws_closed(self, websocket):
         self.observer.stop()
