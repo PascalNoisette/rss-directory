@@ -2,5 +2,4 @@ PyRSS2Gen
 tinytag
 celery
 Jinja2
-websocket
 watchdog
