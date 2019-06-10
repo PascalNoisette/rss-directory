@@ -6,6 +6,7 @@
 """
 
 import os
+from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler
 
 import re
@@ -75,13 +76,13 @@ class RangeHandler(SimpleHTTPRequestHandler):
             # transmitted *less* than the content-length!
             f = open(path, 'rb')
         except IOError:
-            self.send_error(404, "File not found")
+            self.send_error(HTTPStatus.NOT_FOUND, "File not found")
             return None
 
         if self.range_from is None:
-            self.send_response(200)
+            self.send_response(HTTPStatus.OK)
         else:
-            self.send_response(206)
+            self.send_response(HTTPStatus.PARTIAL_CONTENT)
 
         self.send_header("Content-type", ctype)
         fs = os.fstat(f.fileno())
@@ -95,7 +96,7 @@ class RangeHandler(SimpleHTTPRequestHandler):
                                                  file_size))
             # Add 1 because ranges are inclusive
 
-            self.send_header("Content-Length",
+            self.send_header("Content-Length", "%d" %
                              (1 + self.range_to - self.range_from))
         else:
             self.send_header("Content-Length", str(file_size))
