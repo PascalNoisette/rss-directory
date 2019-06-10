@@ -2,6 +2,10 @@ import os
 import tempfile
 from http.server import BaseHTTPRequestHandler
 
+try:
+    import uwsgi
+except ImportError:
+    pass
 
 class WsgiHandler(BaseHTTPRequestHandler):
     # generic class for SimpleHTTPServer
@@ -19,6 +23,10 @@ class WsgiHandler(BaseHTTPRequestHandler):
         environ = self.request
         os.chdir(environ['DOCUMENT_ROOT'] + "/")
         self.request_version = environ['SERVER_PROTOCOL'];
+        if 'HTTP_SEC_WEBSOCKET_KEY' in environ:
+            uwsgi.websocket_handshake(environ['HTTP_SEC_WEBSOCKET_KEY'], environ.get('HTTP_ORIGIN', ''))
+            environ['REQUEST_METHOD'] = 'SOCKET'
+            self.http_handler = self
         self.command = environ['REQUEST_METHOD']
         self.directory = os.getcwd()
         self.client_address = environ['REMOTE_ADDR']
@@ -30,6 +38,15 @@ class WsgiHandler(BaseHTTPRequestHandler):
                 self.headers["-".join(map(str.capitalize, header[5:].split("_")))] = environ[header]
             if header.startswith("X"):
                 self.headers[header] = environ[header]
+        if 'HTTP_SEC_WEBSOCKET_KEY' in environ:
+            self.on_ws_connected(self)
+
+    def do_SOCKET(self):
+        pass
+
+    def send_message(self, message):
+        uwsgi.websocket_send(message)
+
 
     def handle(self):
         mname = 'do_' + self.command

@@ -55,6 +55,9 @@ You must have a clean document root for the backend
 
 ## Or build
 ```
+sudo apt-get install libssl-dev
+CFLAGS="-I/usr/local/opt/openssl/include" LDFLAGS="-L/usr/local/opt/openssl/lib" UWSGI_PROFILE_OVERRIDE=ssl=true venv/bin/pip3 install uwsgi -I --no-cache-dir
+
 git clone https://github.com/PascalNoisette/rss-directory.git
 pip install -r requirements.txt
 python ./directoryrss.py 

@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  backend:
+    build: .
+    volumes:
+      - "/pub/:/pub/"
+      - .:/app/
+    depends_on:
+      - rabbitmq
+    command: sh -c "uwsgi --ini uwsgi.ini & python ./venv/bin/celery -A background worker --loglevel=debug"
+    environment:
+      - BROKER=pyamqp://guest@rabbitmq//
+
+
+  frontend:
+    image: nginx:1.13-alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - rabbitmq
+      - backend
+    ports:
+      - 80:80
+
+  rabbitmq:
+      image: rabbitmq
