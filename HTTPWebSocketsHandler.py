@@ -168,9 +168,11 @@ class HTTPWebSocketsHandler:
         hexed = sha1(coded_ID).hexdigest()
         hex_decoded = codecs.decode(hexed, 'hex_codec')
         digest = b64encode(hex_decoded).decode()
-        self.http_handler.send_response(101, 'Switching Protocols')
-        self.http_handler.send_header('Upgrade', 'websocket')
-        self.http_handler.send_header('Connection', 'Upgrade')
+        self.http_handler.protocol_version = "HTTP/1.1"
+        self.http_handler.send_response(101, 'Web Socket Protocol Handshake')
+        self.http_handler.send_header('Upgrade', 'WebSocket')
+        self.http_handler.send_header('Connection', 'upgrade')
+        self.http_handler.send_header('Sec-WebSocket-Origin', self.http_handler.get_base_url())
         self.http_handler.send_header('Sec-WebSocket-Accept', digest)
         self.http_handler.end_headers()
         self.connected = True
