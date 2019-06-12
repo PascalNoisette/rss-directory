@@ -23,6 +23,27 @@ def file_is_ready(static_file):
     return True
 
 
+def monitor(func):
+    def interceptor(root_dir, base_url):
+        fifo_name = root_dir + "/monitor.fifo"
+        try:
+            os.mkfifo(fifo_name)
+        except FileExistsError:
+            pass
+        fifo = open(fifo_name, "w")
+        open(fifo_name, "r")
+
+        counter = 0
+        total = sum([len(files) for r, d, files in os.walk(root_dir)])
+        for i in func(root_dir, base_url):
+            counter += 1
+            fifo.write("{'counter':%d, 'total':%d"% (counter, total))
+            yield i
+        #os.remove(fifo_name)
+    return interceptor
+
+
+@monitor
 def get_items(root_dir, base_url):
     for dir_, _, files in os.walk(root_dir):
         for file_name in files:
@@ -56,4 +77,4 @@ if __name__ == "__main__":
     parser.add_option("-b", "--base_url", help="Url as prefix", default="http://127.0.0.1:5000/")
     (option, args) = parser.parse_args()
     os.chdir(option.dir)
-    run(option.path, option.file, option.base_url)
+    run(option.path, option.file, option.base_url, option.dir)
