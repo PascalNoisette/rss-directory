@@ -37,7 +37,10 @@ class WatchHandler(SimpleHTTPRequestHandler):
         if os.path.exists(file):
             Path(file).touch()
 
-        select.select([self.rfile, r_pipe], [], [self.rfile, r_pipe])
+        print(os.path.dirname("/pub" + self.path) + "monitor")
+        progress = os.open(os.path.dirname("/pub" + self.path) + "monitor")
+
+        select.select([self.rfile, r_pipe, progress], [], [self.rfile, r_pipe, progress])
         self.observer.stop()
         websocket.send_message(self.path + " has changed")
 
