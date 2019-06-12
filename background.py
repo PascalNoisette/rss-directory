@@ -10,6 +10,8 @@ import optparse
 import sys
 import fcntl
 from shutil import copyfile
+from monitor import monitor
+from functools import partial
 
 from itunes import ItunesRSS2, ItunesRSSItem, is_valid_itunes_rss_item
 
@@ -22,28 +24,12 @@ def file_is_ready(static_file):
         return False
     return True
 
+def monitor_item_creation(root_dir, base_url):
+    total = sum([len(files) for r, d, files in os.walk(root_dir)])
+    filename = root_dir + "/monitor"
+    return 1, total, open(filename, "w")
 
-def monitor(func):
-    def interceptor(root_dir, base_url):
-        fifo_name = root_dir + "/monitor.fifo"
-        try:
-            os.mkfifo(fifo_name)
-        except FileExistsError:
-            pass
-        fifo = open(fifo_name, "w")
-        open(fifo_name, "r")
-
-        counter = 0
-        total = sum([len(files) for r, d, files in os.walk(root_dir)])
-        for i in func(root_dir, base_url):
-            counter += 1
-            fifo.write("{'counter':%d, 'total':%d"% (counter, total))
-            yield i
-        #os.remove(fifo_name)
-    return interceptor
-
-
-@monitor
+@partial(monitor, implementation=monitor_item_creation)
 def get_items(root_dir, base_url):
     for dir_, _, files in os.walk(root_dir):
         for file_name in files:
