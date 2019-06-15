@@ -6,6 +6,7 @@
 import datetime
 import hashlib
 import urllib
+import os
 
 import PyRSS2Gen
 from tinytag import TinyTag
@@ -48,6 +49,8 @@ class ItunesRSSItem(PyRSS2Gen.RSSItem):
         Override PyRSS2Gen.RSSItem constructor to simplify constructor args for user
         """
         tag = TinyTag.get(rel_file)
+        if tag.title is None:
+            tag.title, ext = os.path.splitext(os.path.basename(rel_file))
         super().__init__(
             title=tag.title,
             link=urllib.parse.quote(rel_file),
@@ -61,7 +64,8 @@ class ItunesRSSItem(PyRSS2Gen.RSSItem):
         """
          Override to set values of various itunes xmlns tags
          """
-        PyRSS2Gen._element(handler, "image", PyRSS2Gen.Image(self.enclosure.url + ".png", self.title, self.link))
+        if self.enclosure.url.endswith(".mp3"):
+            PyRSS2Gen._element(handler, "image", PyRSS2Gen.Image(self.enclosure.url + ".png", self.title, self.link))
 
 
 def is_valid_itunes_rss_item(rel_file):
