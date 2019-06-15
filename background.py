@@ -56,4 +56,4 @@ if __name__ == "__main__":
     parser.add_option("-b", "--base_url", help="Url as prefix", default="http://127.0.0.1:5000/")
     (option, args) = parser.parse_args()
     os.chdir(option.dir)
-    run(option.path, option.file, option.base_url)
+    run(option.path, option.file, option.base_url, option.dir)
