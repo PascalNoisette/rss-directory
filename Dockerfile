@@ -1,6 +1,6 @@
 FROM python:3.7.3-alpine3.9
 
-RUN apk add --no-cache --virtual .build-deps gcc libc-dev linux-headers openssl-dev
+RUN apk add --no-cache --virtual .build-deps gcc libc-dev linux-headers openssl-dev libffi-dev
 
 RUN adduser -S uwsgi
 
